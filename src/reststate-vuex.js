@@ -235,7 +235,7 @@ const resourceModule = ({ name: resourceName, httpClient, namespace }) => {
             commit('STORE_PAGE', response.data);
             commit('STORE_META', response.meta);
             commit('SET_LINKS', response.links);
-            storeIncluded({ commit, dispatch }, response);
+            storeIncluded({ commit, dispatch }, response, namespace);
           })
           .catch(handleError(commit));
       },
@@ -249,7 +249,7 @@ const resourceModule = ({ name: resourceName, httpClient, namespace }) => {
           commit('STORE_PAGE', response.data);
           commit('SET_LINKS', response.links);
           commit('STORE_META', response.meta);
-          storeIncluded({ commit, dispatch }, response);
+          storeIncluded({ commit, dispatch }, response, namespace);
         });
       },
 
@@ -262,7 +262,7 @@ const resourceModule = ({ name: resourceName, httpClient, namespace }) => {
           commit('STORE_PAGE', response.data);
           commit('SET_LINKS', response.links);
           commit('STORE_META', response.meta);
-          storeIncluded({ commit, dispatch }, response);
+          storeIncluded({ commit, dispatch }, response, namespace);
         });
       },
 
