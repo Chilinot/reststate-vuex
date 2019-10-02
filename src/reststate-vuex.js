@@ -31,11 +31,13 @@ const paramsWithParentIdentifierOnly = params => ({
   parent: getResourceIdentifier(params.parent),
 });
 
-const storeIncluded = ({ commit, dispatch }, result) => {
+const storeIncluded = ({ commit, dispatch }, result, namespace) => {
   if (result.included) {
     // store the included records
     result.included.forEach(relatedRecord => {
-      const action = `${relatedRecord.type}/storeRecord`;
+      const action = `${
+        namespace ? namespace + '/' : ''
+      }${relatedRecord.type}/storeRecord`;
       dispatch(action, relatedRecord, { root: true });
     });
 
@@ -65,7 +67,9 @@ const storeIncluded = ({ commit, dispatch }, result) => {
               parent: getResourceIdentifier(primaryRecord),
             },
           };
-          const action = `${type}/storeRelated`;
+          const action = `${
+            namespace ? namespace + '/' : ''
+          }${type}/storeRelated`;
           dispatch(action, options, { root: true });
         });
       }
@@ -94,7 +98,7 @@ const initialState = () => ({
   lastMeta: null,
 });
 
-const resourceModule = ({ name: resourceName, httpClient }) => {
+const resourceModule = ({ name: resourceName, httpClient, namespace }) => {
   const client = new ResourceClient({ name: resourceName, httpClient });
 
   return {
@@ -188,7 +192,7 @@ const resourceModule = ({ name: resourceName, httpClient }) => {
             commit('SET_STATUS', STATUS_SUCCESS);
             commit('REPLACE_ALL_RECORDS', result.data);
             commit('STORE_META', result.meta);
-            storeIncluded({ commit, dispatch }, result);
+            storeIncluded({ commit, dispatch }, result, namespace);
           })
           .catch(handleError(commit));
       },
@@ -365,10 +369,10 @@ const resourceModule = ({ name: resourceName, httpClient }) => {
   };
 };
 
-const mapResourceModules = ({ names, httpClient }) =>
+const mapResourceModules = ({ names, httpClient, namespace }) =>
   names.reduce(
     (acc, name) =>
-      Object.assign({ [name]: resourceModule({ name, httpClient }) }, acc),
+      Object.assign({ [name]: resourceModule({ name, httpClient, namespace }) }, acc,),
     {},
   );
 
